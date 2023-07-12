@@ -1,0 +1,220 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        /* background-color: black; */
+        /* border: 2px solid black; */
+
+        /* display: flex; */
+        /* justify-content: center; */
+        /* align-items: center; */
+        background-color: lightslategray;
+        /* border-collapse: collapse; */
+      }
+      .audiopage1 {
+        /* margin:0px;
+            padding:0px; */
+        height: 100%;
+        display: flex;
+        /* border: 2px solid black; */
+        /* flex-direction: column; */
+      }
+      .audiopage {
+        /* left:0; */
+        font-size: xx-large;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(90 89 73);
+        /* width:50%; */
+        /* background-color: rgb(211, 206, 129); */
+        padding: 30px;
+        border: 2px solid black;
+        /* border-radius: 10px; */
+      }
+      .table {
+        /* float:left; */
+        width:50%;
+        /* height:50%; */
+        margin:0px;
+        font-size: xx-large;
+        /* border: 2px solid rgb(232, 98, 8); */
+      }
+      table{
+        /* flex-direction: column; */
+        width: 100%;
+        border-collapse: collapse;
+        font-size: xx-large;
+      }
+      th {
+        /* width:1000000px; */
+        /* display: inline; */
+        /* border: 2px solid rgba(4, 2, 0, 0.041); */
+        /* background-color: #30272787; */
+        color: white;
+      }
+      td{ 
+        /* border: 2px solid black; */
+        text-align:center;
+      color:white;
+        /* background-color: #284a6687; */
+      }
+    /* label{ */
+        /* color: black; */
+    /* } */
+      form {
+        width: 100%;
+        margin: 20px;
+        padding: 10px;
+        background-color: rgba(75, 22, 22, 0.415);
+        /* display: inline-block; */
+        /* flex-direction: column; */
+        /* justify-content: center; */
+        /* align-items: center; */
+
+        text-align: center;
+      }
+      /* .form-group2{ */
+      /* float:left; */
+      /* display: inline; */
+      /* margin:0px 30px 30px 0px; */
+      /* margin-top: 20px; */
+      /* border: 2px solid black; */
+      /* margin-right:5px; */
+      /* margin-left:100px; */
+      /* } */
+      .form-group1 {
+        /* display: inline; */
+        /* border: 2px solid black; */
+        margin: 30px;
+        /* margin-left:5px; */
+        /* margin-right:40px; */
+      }
+      .but {
+        /* border: 2px solid black; */
+        /* width:50%; */
+        /* float:left; */
+        margin: px auto;
+        padding: 3px 5px;
+        /* text-align: center; */
+      }
+      button {
+        margin: 20px auto;
+        background-color: dimgrey;
+        /* background-color:black; */
+        font-size: larger;
+        font-family: "Times New Roman", Times, serif;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      button:hover {
+        box-shadow: 1px 1px burlywood;
+        opacity: 0.5;
+      }
+      input {
+        width: 80%;
+        margin-bottom: 10px;
+        /* margin:3px; */
+        padding: 10px;
+        /* background-color: black; */
+      }
+      .new {
+        margin-top: 5px;
+        margin-bottom: 30px;
+      }
+      #deletecomment{
+
+        background-color: red;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <!-- <div class="audiopage1"> -->
+      <div class="audiopage">
+        <a href="{% url 'home'  %}"
+          ><button class="new">Create New Audio</button></a
+        >
+        <!-- <hr style="color:black;"> -->
+        <div>
+          <audio id="my-audio" controls>
+            <source src="{{ video.audio_file.url }}" type="audio/wav" />
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+        <div>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <br />
+            <div class="form-group1">
+              <label for="{{ form.timestamps.id_for_label }}">Time stamp:</label>
+              {{ form.timestamps }}
+          </div>
+            <div class="form-group2">
+              <label for="{{ form.comments.id_for_label }}">Comments:</label>
+              {{ form.comments }}
+          </div>
+            <br />
+            <div class="but">
+              <button type="submit">Upload</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table">
+        <table>
+          <th>Time stamps</th>
+          <th>Comments</th>
+          <th>Delete</th>
+
+          {% for c in comments %}
+          <tr>
+            <td>{{c.timestamps}}</td>
+            <td>{{c.comments}}</td>
+            <td>
+              <form action="{% url 'delete_comment' c.pk video.pk %}" method="POST" style="display: inline;">
+                  {% csrf_token %}
+                  <button type="submit" onclick="return confirm('Are you sure you want to delete this comment?')" id ="deletecomment" class ="delete">Delete<i class="fas fa-trash-alt"></i></button>
+              </form>
+          </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    <!-- </div> -->
+
+    <script>
+      var audioElement = document.getElementById("my-audio");
+      var timestampsField = document.getElementById(
+        "{{ form.timestamps.id_for_label }}"
+      );
+
+      audioElement.addEventListener("pause", function () {
+        var pausedTimestamp = audioElement.currentTime;
+
+        var hours = Math.floor(pausedTimestamp / 3600);
+        var minutes = Math.floor((pausedTimestamp % 3600) / 60);
+        var seconds = Math.floor(pausedTimestamp % 60);
+
+        var formattedTime =
+          hours.toString().padStart(2, "0") +
+          ":" +
+          minutes.toString().padStart(2, "0") +
+          ":" +
+          seconds.toString().padStart(2, "0");
+
+        timestampsField.value = formattedTime;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,161 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        background-color: lightslategray;
+      }
+      .audio_page {
+        height: 100%;
+        display: flex;
+      }
+      .home {
+        font-size: xx-large;
+        width: 50%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(90 89 73);
+        padding: 30px;
+        border: 2px solid black;
+      }
+      .table {
+        width:50%;
+        margin:0px;
+        font-size: xx-large;
+      }
+      table{
+        width: 100%;
+        border-collapse: collapse;
+        font-size: xx-large;
+      }
+      th {
+        background-color: #284a6687;
+        color: white;
+      }
+      td{ 
+        text-align:center;
+      color:white;
+      }
+      form {
+        width: 100%;
+        margin: 20px;
+        padding: 10px;
+        background-color: rgba(75, 22, 22, 0.415);
+
+        text-align: center;
+      }
+      .form-group1 {
+        margin: 30px;
+      }
+      .but {
+        margin: px auto;
+        padding: 3px 5px;
+      }
+      button {
+        margin: 20px auto;
+        background-color: dimgrey;
+        font-size: larger;
+        font-family: "Times New Roman", Times, serif;
+        font-weight: bold;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      button:hover {
+        box-shadow: 1px 1px burlywood;
+        opacity: 0.5;
+      }
+      input {
+        width: 80%;
+        margin-bottom: 10px;
+        padding: 10px;
+      }
+      .new {
+        margin-top: 5px;
+        margin-bottom: 30px;
+      }
+      #deletecomment{
+
+        background-color: red;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class="audio_page ">
+      <div class="home">
+        <a href="{% url 'home'  %}"
+          ><button class="new">Create New Audio</button></a
+        >
+        <div>
+          <audio id="my-audio" controls>
+            <source src="{{ video.audio_file.url }}" type="audio/wav" >
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+        <div>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <br >
+            <div class="form-group">
+              <input type="text" id="{{ form.timestamps.id_for_label }}" name="{{ form.timestamps.html_name }}" class="form-control" placeholder="Time Stamp" maxlength="{{ form.timestamps.field.max_length }}">
+          </div>
+          <div class="form-group">
+              <input type="text" id="{{ form.comments.id_for_label }}" name="{{ form.comments.html_name }}" class="form-control" placeholder="Comment" maxlength="{{ form.comments.field.max_length }}">
+          </div>
+            <br >
+            <div class="but">
+              <button type="submit"><i class="fas fa-upload"></i> Upload</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="table">
+        <table>
+          <th>Time stamps</th>
+          <th>Comments</th>
+
+          {% for c in comments %}
+          <tr>
+            <td>{{c.timestamps}}</td>
+            <td>{{c.comments}}</td>
+            <td>
+          </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+
+    <script>
+      var audioElement = document.getElementById('my-audio');
+      var timestampsField = document.getElementById(
+        '{{ form.timestamps.id_for_label }}'
+      );
+
+      audioElement.addEventListener("pause", function () {
+        var pausedTimestamp = audioElement.currentTime;
+
+        var hours = Math.floor(pausedTimestamp / 3600);
+        var minutes = Math.floor((pausedTimestamp % 3600) / 60);
+        var seconds = Math.floor(pausedTimestamp % 60);
+
+        var formattedTime =
+          hours.toString().padStart(2, "0") +
+          ":" +
+          minutes.toString().padStart(2, "0") +
+          ":" +
+          seconds.toString().padStart(2, "0");
+
+        timestampsField.value = formattedTime;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,140 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0px;
+        font-size: x-large;
+        background-color: hsla(20, 33%, 68%, 0.943);
+      }
+      header {
+        border: 2px solid rgb(95, 72, 72);
+        /* background-color: #021625; */
+        background-color: #20567f;
+        padding: 20px;
+      }
+
+      .loading-spinner {
+        width: 100%;
+        height: 100%;
+        border: 2px solid black;
+        display: inline-block;
+      }
+      .aud{
+        text-align: center;
+        padding: 20px;
+      }
+      button{
+        border-color:whitesmoke ;
+        border-radius: 12px;
+          padding: 9px;
+          font-size: large;
+          cursor: pointer;
+      }
+      .aud a button{
+        background-color: rgb(109, 151, 65);
+      }
+      span{
+        margin-left:50px;
+        font-size:larger
+      }
+      span a{
+        cursor: pointer;
+        border-radius:5px ;
+        padding:3px;
+        text-decoration: none;
+        color:rgba(4, 30, 31, 0.542);
+        background-color: rgba(222, 75, 95, 0.864);
+        position: absolute;
+        right: 3%;  
+      }
+      button:hover{
+        opacity: 0.8;
+      }
+      form{
+        margin:50px;
+        text-align: center;
+      }
+      label{
+        padding: 12px;
+      }
+      .form-group{
+        margin:20px;
+      }
+      span a:hover{
+        opacity:0.8;
+      }
+      #upload-button{
+        background-color: rgb(86, 86, 155);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading-spinner" class="loading-spinner">
+      <div class="page-content">
+        <header class="site-header">
+          <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+            <div class="heading">
+              <span>Hello {{request.user}}</span>
+              <span><a href="{% url 'logout' %}">LOGOUT ></a></span>
+            </div>
+        </nav>
+    </header>
+        <div class="aud">
+        <a href="{% url 'video_list'  %}"><button>AUDIO LIST</button></a>
+    </div>
+        <form id="upload-form" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="{{ form.title.id_for_label }}">Title:</label>
+            {{ form.title }}
+          </div>
+          <div class="form-group">
+            <label for="{{ form.video_file.id_for_label }}">Video File:</label>
+            {{ form.video_file }}
+          </div>
+
+          <button type="button" id="upload-button">Upload</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#upload-button").click(function () {
+          var form = $("#upload-form")[0];
+          var formData = new FormData(form);
+
+          $("body").addClass("loading"); // Add loading class to body
+
+          $.ajax({
+            url: '{% url "home" %}',
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function () {
+              // Show the loading spinner before sending the request
+              $("#loading-spinner").show();
+            },
+            success: function () {
+              // Hide the loading spinner on success
+              $("#loading-spinner").hide();
+              $("body").removeClass("loading"); // Remove loading class from body
+              window.location.href = '{% url "video_list" %}';
+            },
+            error: function () {
+              // Hide the loading spinner on error
+              $("#loading-spinner").hide();
+              $("body").removeClass("loading"); // Remove loading class from body
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
